@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="595d07c8953d48729f7c1ccfc2375e43" Name="Diagram1">
+        <EntityTypeShape EntityType="BusinessEngineModel.Error" Width="1.5" PointX="10.375" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusinessEngineModel.Order" Width="1.5" PointX="8.25" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusinessEngineModel.StandardDocument" Width="1.5" PointX="6.375" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusinessEngineModel.Supplier" Width="1.5" PointX="2.625" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusinessEngineModel.SupplierVendor" Width="1.5" PointX="4.5" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusinessEngineModel.API" Width="1.75" PointX="0.5" PointY="0.625" />
+        <EntityTypeShape EntityType="BusinessEngineModel.Status" Width="1.5" PointX="5.25" PointY="4.375" />
+        <AssociationConnector Association="BusinessEngineModel.FK_Suppliers_APIs" />
+        <AssociationConnector Association="BusinessEngineModel.FK_Orders_StandardDocuments" />
+        <AssociationConnector Association="BusinessEngineModel.FK_Orders_Statuses" />
+        <AssociationConnector Association="BusinessEngineModel.FK_StandardDocuments_Suppliers" />
+        <AssociationConnector Association="BusinessEngineModel.FK_SupplierVendors_Suppliers" />
+        <AssociationConnector Association="BusinessEngineModel.OrderError" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

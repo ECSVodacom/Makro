@@ -1,0 +1,532 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="BusinessEngineModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="APIs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="EndPoint" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="NameSpace" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Gln" Type="varchar" MaxLength="15" />
+          <Property Name="NormalOrderCodes" Type="varchar" MaxLength="50" />
+          <Property Name="MultiStoreOrderCodes" Type="varchar" MaxLength="50" />
+          <Property Name="RejectOrderCodes" Type="varchar" MaxLength="50" />
+          <Property Name="SendPdfToBizOrderCodes" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Errors">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderId" Type="bigint" />
+          <Property Name="ErrorMessage" Type="varchar(max)" />
+          <Property Name="SupplierId" Type="int" />
+          <Property Name="OccuredAt" Type="datetime" />
+          <Property Name="Identifier" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Identifier" Type="varchar" MaxLength="50" />
+          <Property Name="XmlFile" Type="xml" />
+          <Property Name="ResponseXmlFile" Type="xml" />
+          <Property Name="StatusId" Type="int" />
+          <Property Name="StandardDocumentId" Type="bigint" />
+          <Property Name="EditDate" Type="datetime" />
+          <Property Name="ResendDate" Type="datetime" />
+          <Property Name="AcknowledgementXml" Type="xml" />
+          <Property Name="DoResend" Type="bit" />
+          <Property Name="SellerGln" Type="nvarchar" MaxLength="20" />
+          <Property Name="OrderType" Type="varchar" MaxLength="20" />
+          <Property Name="ShipToGln" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="StandardDocuments">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderNumbers" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="StandardDocumentXml" Type="xml" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="SupplierId" Type="int" Nullable="false" />
+          <Property Name="DoResend" Type="bit" />
+        </EntityType>
+        <EntityType Name="Statuses">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="75" />
+        </EntityType>
+        <EntityType Name="Suppliers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AccountKey" Type="varchar" MaxLength="50" />
+          <Property Name="Ean" Type="varchar" MaxLength="14" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="AcceptRevisedAllocationOrders" Type="bit" Nullable="false" />
+          <Property Name="AcceptRevisedNormalOrders" Type="bit" Nullable="false" />
+          <Property Name="API_Id" Type="int" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="30" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" />
+          <Property Name="FileNamePrefix" Type="varchar" MaxLength="10" />
+          <Property Name="UseAccountKey" Type="bit" />
+          <Property Name="SendEmailAddress" Type="nvarchar" MaxLength="250" />
+          <Property Name="DoSendEmails" Type="bit" />
+          <Property Name="DoSendPdfs" Type="bit" />
+        </EntityType>
+        <EntityType Name="SupplierVendors">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SupplierId" Type="int" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" />
+          <Property Name="Ean" Type="nvarchar" MaxLength="13" />
+          <Property Name="SellerEan" Type="nvarchar" MaxLength="13" />
+          <Property Name="SystemAdded" Type="bit" />
+          <Property Name="Vendor" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_Orders_StandardDocuments">
+          <End Role="StandardDocuments" Type="Self.StandardDocuments" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StandardDocuments">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="StandardDocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Statuses">
+          <End Role="Statuses" Type="Self.Statuses" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Statuses">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="StatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StandardDocuments_Suppliers">
+          <End Role="Suppliers" Type="Self.Suppliers" Multiplicity="1" />
+          <End Role="StandardDocuments" Type="Self.StandardDocuments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Suppliers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StandardDocuments">
+              <PropertyRef Name="SupplierId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Suppliers_APIs">
+          <End Role="APIs" Type="Self.APIs" Multiplicity="0..1" />
+          <End Role="Suppliers" Type="Self.Suppliers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="APIs">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Suppliers">
+              <PropertyRef Name="API_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SupplierVendors_Suppliers">
+          <End Role="Suppliers" Type="Self.Suppliers" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SupplierVendors" Type="Self.SupplierVendors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Suppliers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SupplierVendors">
+              <PropertyRef Name="SupplierId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetSellerGln" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="OrderNumber" Type="nvarchar" Mode="In" />
+          <Parameter Name="SupplierEan" Type="nvarchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="BusinessEngineModelStoreContainer">
+          <EntitySet Name="APIs" EntityType="Self.APIs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Errors" EntityType="Self.Errors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StandardDocuments" EntityType="Self.StandardDocuments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Statuses" EntityType="Self.Statuses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Suppliers" EntityType="Self.Suppliers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SupplierVendors" EntityType="Self.SupplierVendors" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Orders_StandardDocuments" Association="Self.FK_Orders_StandardDocuments">
+            <End Role="StandardDocuments" EntitySet="StandardDocuments" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Statuses" Association="Self.FK_Orders_Statuses">
+            <End Role="Statuses" EntitySet="Statuses" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StandardDocuments_Suppliers" Association="Self.FK_StandardDocuments_Suppliers">
+            <End Role="Suppliers" EntitySet="Suppliers" />
+            <End Role="StandardDocuments" EntitySet="StandardDocuments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Suppliers_APIs" Association="Self.FK_Suppliers_APIs">
+            <End Role="APIs" EntitySet="APIs" />
+            <End Role="Suppliers" EntitySet="Suppliers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SupplierVendors_Suppliers" Association="Self.FK_SupplierVendors_Suppliers">
+            <End Role="Suppliers" EntitySet="Suppliers" />
+            <End Role="SupplierVendors" EntitySet="SupplierVendors" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BusinessEngineModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Error">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderId" Type="Int64" />
+          <Property Name="ErrorMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SupplierId" Type="Int32" />
+          <Property Name="OccuredAt" Type="DateTime" Precision="3" />
+          <Property Name="Identifier" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Identifier" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="XmlFile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResponseXmlFile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StatusId" Type="Int32" />
+          <Property Name="StandardDocumentId" Type="Int64" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <Property Name="ResendDate" Type="DateTime" Precision="3" />
+          <Property Name="AcknowledgementXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DoResend" Type="Boolean" />
+          <Property Name="SellerGln" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="OrderType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ShipToGln" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="StandardDocument" Relationship="BusinessEngineModel.FK_Orders_StandardDocuments" FromRole="Order" ToRole="StandardDocument" />
+          <NavigationProperty Name="Status" Relationship="BusinessEngineModel.FK_Orders_Statuses" FromRole="Order" ToRole="Status" />
+        </EntityType>
+        <EntityType Name="StandardDocument">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderNumbers" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StandardDocumentXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SupplierId" Type="Int32" Nullable="false" />
+          <Property Name="DoResend" Type="Boolean" />
+          <NavigationProperty Name="Orders" Relationship="BusinessEngineModel.FK_Orders_StandardDocuments" FromRole="StandardDocument" ToRole="Order" />
+          <NavigationProperty Name="Supplier" Relationship="BusinessEngineModel.FK_StandardDocuments_Suppliers" FromRole="StandardDocument" ToRole="Supplier" />
+        </EntityType>
+        <EntityType Name="Supplier">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AccountKey" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Ean" Type="String" MaxLength="14" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AcceptRevisedAllocationOrders" Type="Boolean" Nullable="false" />
+          <Property Name="AcceptRevisedNormalOrders" Type="Boolean" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FileNamePrefix" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="API_Id" Type="Int32" />
+          <Property Name="UseAccountKey" Type="Boolean" />
+          <Property Name="SendEmailAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DoSendEmails" Type="Boolean" />
+          <Property Name="DoSendPdfs" Type="Boolean" />
+          <NavigationProperty Name="API" Relationship="BusinessEngineModel.FK_Suppliers_APIs" FromRole="Supplier" ToRole="API" />
+          <NavigationProperty Name="StandardDocuments" Relationship="BusinessEngineModel.FK_StandardDocuments_Suppliers" FromRole="Supplier" ToRole="StandardDocument" />
+          <NavigationProperty Name="SupplierVendors" Relationship="BusinessEngineModel.FK_SupplierVendors_Suppliers" FromRole="Supplier" ToRole="SupplierVendor" />
+        </EntityType>
+        <EntityType Name="SupplierVendor">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SupplierId" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Ean" Type="String" MaxLength="13" FixedLength="false" Unicode="true" />
+          <Property Name="SellerEan" Type="String" MaxLength="13" FixedLength="false" Unicode="true" />
+          <Property Name="SystemAdded" Type="Boolean" />
+          <Property Name="Vendor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplier" Relationship="BusinessEngineModel.FK_SupplierVendors_Suppliers" FromRole="SupplierVendor" ToRole="Supplier" />
+        </EntityType>
+        <EntityContainer Name="BusinessEngine" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Errors" EntityType="Self.Error" />
+          <EntitySet Name="Orders" EntityType="Self.Order" />
+          <EntitySet Name="StandardDocuments" EntityType="Self.StandardDocument" />
+          <EntitySet Name="Suppliers" EntityType="Self.Supplier" />
+          <EntitySet Name="SupplierVendors" EntityType="Self.SupplierVendor" />
+          <FunctionImport Name="GetSellerGln" ReturnType="Collection(String)">
+            <Parameter Name="OrderNumber" Mode="In" Type="String" />
+            <Parameter Name="SupplierEan" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="APIs" EntityType="BusinessEngineModel.API" />
+          <EntitySet Name="Statuses" EntityType="BusinessEngineModel.Status" />
+          <AssociationSet Name="FK_Suppliers_APIs" Association="BusinessEngineModel.FK_Suppliers_APIs">
+            <End Role="API" EntitySet="APIs" />
+            <End Role="Supplier" EntitySet="Suppliers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_StandardDocuments" Association="BusinessEngineModel.FK_Orders_StandardDocuments">
+            <End Role="StandardDocument" EntitySet="StandardDocuments" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Statuses" Association="BusinessEngineModel.FK_Orders_Statuses">
+            <End Role="Status" EntitySet="Statuses" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StandardDocuments_Suppliers" Association="BusinessEngineModel.FK_StandardDocuments_Suppliers">
+            <End Role="Supplier" EntitySet="Suppliers" />
+            <End Role="StandardDocument" EntitySet="StandardDocuments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SupplierVendors_Suppliers" Association="BusinessEngineModel.FK_SupplierVendors_Suppliers">
+            <End Role="Supplier" EntitySet="Suppliers" />
+            <End Role="SupplierVendor" EntitySet="SupplierVendors" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="API">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EndPoint" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NameSpace" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Gln" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="NormalOrderCodes" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MultiStoreOrderCodes" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RejectOrderCodes" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SendPdfToBizOrderCodes" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Suppliers" Relationship="BusinessEngineModel.FK_Suppliers_APIs" FromRole="API" ToRole="Supplier" />
+        </EntityType>
+        <EntityType Name="Status">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Orders" Relationship="BusinessEngineModel.FK_Orders_Statuses" FromRole="Status" ToRole="Order" />
+        </EntityType>
+        <Association Name="FK_Suppliers_APIs">
+          <End Type="BusinessEngineModel.API" Role="API" Multiplicity="0..1" />
+          <End Type="BusinessEngineModel.Supplier" Role="Supplier" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="API">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Supplier">
+              <PropertyRef Name="API_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_StandardDocuments">
+          <End Type="BusinessEngineModel.StandardDocument" Role="StandardDocument" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BusinessEngineModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StandardDocument">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="StandardDocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Statuses">
+          <End Type="BusinessEngineModel.Status" Role="Status" Multiplicity="0..1" />
+          <End Type="BusinessEngineModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Status">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="StatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StandardDocuments_Suppliers">
+          <End Type="BusinessEngineModel.Supplier" Role="Supplier" Multiplicity="1" />
+          <End Type="BusinessEngineModel.StandardDocument" Role="StandardDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplier">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StandardDocument">
+              <PropertyRef Name="SupplierId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SupplierVendors_Suppliers">
+          <End Type="BusinessEngineModel.Supplier" Role="Supplier" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BusinessEngineModel.SupplierVendor" Role="SupplierVendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplier">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SupplierVendor">
+              <PropertyRef Name="SupplierId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BusinessEngineModelStoreContainer" CdmEntityContainer="BusinessEngine">
+          <EntitySetMapping Name="Errors">
+            <EntityTypeMapping TypeName="BusinessEngineModel.Error">
+              <MappingFragment StoreEntitySet="Errors">
+                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="SupplierId" ColumnName="SupplierId" />
+                <ScalarProperty Name="OccuredAt" ColumnName="OccuredAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="BusinessEngineModel.Order">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="ShipToGln" ColumnName="ShipToGln" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+                <ScalarProperty Name="XmlFile" ColumnName="XmlFile" />
+                <ScalarProperty Name="ResponseXmlFile" ColumnName="ResponseXmlFile" />
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="StandardDocumentId" ColumnName="StandardDocumentId" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="ResendDate" ColumnName="ResendDate" />
+                <ScalarProperty Name="AcknowledgementXml" ColumnName="AcknowledgementXml" />
+                <ScalarProperty Name="DoResend" ColumnName="DoResend" />
+                <ScalarProperty Name="SellerGln" ColumnName="SellerGln" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StandardDocuments">
+            <EntityTypeMapping TypeName="BusinessEngineModel.StandardDocument">
+              <MappingFragment StoreEntitySet="StandardDocuments">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OrderNumbers" ColumnName="OrderNumbers" />
+                <ScalarProperty Name="StandardDocumentXml" ColumnName="StandardDocumentXml" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="SupplierId" ColumnName="SupplierId" />
+                <ScalarProperty Name="DoResend" ColumnName="DoResend" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Suppliers">
+            <EntityTypeMapping TypeName="BusinessEngineModel.Supplier">
+              <MappingFragment StoreEntitySet="Suppliers">
+                <ScalarProperty Name="DoSendPdfs" ColumnName="DoSendPdfs" />
+                <ScalarProperty Name="DoSendEmails" ColumnName="DoSendEmails" />
+                <ScalarProperty Name="SendEmailAddress" ColumnName="SendEmailAddress" />
+                <ScalarProperty Name="UseAccountKey" ColumnName="UseAccountKey" />
+                <ScalarProperty Name="API_Id" ColumnName="API_Id" />
+                <ScalarProperty Name="FileNamePrefix" ColumnName="FileNamePrefix" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AcceptRevisedNormalOrders" ColumnName="AcceptRevisedNormalOrders" />
+                <ScalarProperty Name="AcceptRevisedAllocationOrders" ColumnName="AcceptRevisedAllocationOrders" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="AccountKey" ColumnName="AccountKey" />
+                <ScalarProperty Name="Ean" ColumnName="Ean" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SupplierVendors">
+            <EntityTypeMapping TypeName="BusinessEngineModel.SupplierVendor">
+              <MappingFragment StoreEntitySet="SupplierVendors">
+                <ScalarProperty Name="Vendor" ColumnName="Vendor" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SupplierId" ColumnName="SupplierId" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Ean" ColumnName="Ean" />
+                <ScalarProperty Name="SellerEan" ColumnName="SellerEan" />
+                <ScalarProperty Name="SystemAdded" ColumnName="SystemAdded" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetSellerGln" FunctionName="BusinessEngineModel.Store.GetSellerGln" />
+          <EntitySetMapping Name="APIs">
+            <EntityTypeMapping TypeName="BusinessEngineModel.API">
+              <MappingFragment StoreEntitySet="APIs">
+                <ScalarProperty Name="SendPdfToBizOrderCodes" ColumnName="SendPdfToBizOrderCodes" />
+                <ScalarProperty Name="RejectOrderCodes" ColumnName="RejectOrderCodes" />
+                <ScalarProperty Name="MultiStoreOrderCodes" ColumnName="MultiStoreOrderCodes" />
+                <ScalarProperty Name="NormalOrderCodes" ColumnName="NormalOrderCodes" />
+                <ScalarProperty Name="Gln" ColumnName="Gln" />
+                <ScalarProperty Name="NameSpace" ColumnName="NameSpace" />
+                <ScalarProperty Name="EndPoint" ColumnName="EndPoint" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Statuses">
+            <EntityTypeMapping TypeName="BusinessEngineModel.Status">
+              <MappingFragment StoreEntitySet="Statuses">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
